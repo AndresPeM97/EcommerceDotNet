@@ -80,8 +80,8 @@ namespace Ecommerce.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("Phone")
-                        .HasColumnType("int");
+                    b.Property<decimal>("Phone")
+                        .HasColumnType("decimal(10,0)");
 
                     b.Property<string>("Surname")
                         .IsRequired()

@@ -14,5 +14,7 @@ public class User
     public string Password { get; set; }
     public DateTime Birthday { get; set; }
     public string Country { get; set; }
-    public int Phone { get; set; }
+    
+    [Column(TypeName = "decimal(10,0)")]
+    public decimal Phone { get; set; }
 }
