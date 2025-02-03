@@ -9,10 +9,16 @@ public class Product
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
     public string Name { get; set; }
+    [Column(TypeName = "decimal(10,2)")]
     public decimal Price { get; set; }
     public string Description { get; set; }
-    public string Quantity { get; set; }
+    public int Quantity { get; set; }
     
     [Column(TypeName = "decimal(2,1)")]
-    public decimal Rate { get; set; }
+    public decimal? Rate { get; set; }
+    
+    [ForeignKey("UserId")]
+    public string Owner  { get; set; }
+    
+    virtual public User User { get; set; }
 }

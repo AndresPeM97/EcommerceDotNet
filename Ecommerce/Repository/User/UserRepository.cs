@@ -1,44 +1,70 @@
 using Ecommerce.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Ecommerce.Repository;
 
 public class UserRepository : IUserRepository<User>
 {
-    private StoreContext _context;
+    private UserManager<User> _userManager;
+    private SignInManager<User> _signInManager;
 
-    public UserRepository(StoreContext context)
+    public UserRepository(UserManager<User> userManager,
+        SignInManager<User> signInManager)
     {
-        _context = context;
+        _userManager = userManager;
+        _signInManager = signInManager;
     }
-    public async Task<IEnumerable<User>> Get()
+    public async Task<User> ValidatePass(User entity)
     {
-        return await _context.Users.ToListAsync();
-    }
+        var userFind = await _userManager.FindByEmailAsync(entity.Email);
+        if (userFind == null)
+        {
+            return null;
+        }
+        var passFind = await _signInManager.PasswordSignInAsync(userFind, entity.PasswordHash, false, false);
+        if (!passFind.Succeeded)
+        {
+            return null;
+        }
 
-    public async Task Add(User user)
-    {
-        await _context.Users.AddAsync(user);
-    }
-
-    public void Update(User user)
-    {
-        _context.Users.Attach(user);
-        _context.Entry(user).State = EntityState.Modified;
-    }
-
-    public void Delete(User user)
-    {
-        _context.Users.Remove(user);
+        return userFind;
     }
 
-    public async Task Save()
+    public async Task<IdentityResult> Register(User entity)
     {
-        await _context.SaveChangesAsync();
+        var result = await _userManager.CreateAsync(entity, entity.PasswordHash);
+        
+        return result;
     }
 
-    public IEnumerable<User> Search(Func<User, bool> filter)
+    public async Task SetUserRole(User entity, string role)
     {
-        return _context.Users.Where(filter);
+        await _userManager.AddToRoleAsync(entity, role);
+    }
+
+    public async Task<User> GetUserInfo(string email)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        
+        return user;
+    }
+
+    public async Task<IdentityResult> UpdateInfo(User entity)
+    {
+        var user = await _userManager.UpdateAsync(entity);
+        return user;
+    }
+
+    public async Task<IdentityResult> DeleteUser(User entity)
+    {
+        var result = await _userManager.DeleteAsync(entity);
+        return result;
+    }
+
+
+    public async Task<IList<string>> GetRoles(User entity)
+    {
+        return await _userManager.GetRolesAsync(entity);
     }
 }

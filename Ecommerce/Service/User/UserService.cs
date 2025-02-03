@@ -1,88 +1,154 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using AutoMapper;
 using Ecommerce.DTOs;
 using Ecommerce.Models;
 using Ecommerce.Repository;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Ecommerce.Service;
 
-public class UserService : IUserService<UserDto, UserInsertDto, UserUpdateDto>, IUserLoginService<UserLoginDto>
+public class UserService : IUserLoginService<UserLoginDto>
 {
     private IUserRepository<User> _userRepository;
     private IConfiguration _config;
+    private IMapper _mapper;
+    public IEnumerable<IdentityError> Errors { get; set; }
 
-    public UserService(IUserRepository<User> userRepository, IConfiguration config)
+    public UserService(IUserRepository<User> userRepository, IConfiguration config,
+        IMapper mapper)
     {
         _userRepository = userRepository;
         _config = config;
+        _mapper = mapper;
     }
-    
-    public Task<IEnumerable<UserDto>> Get()
+    public async Task<TokenDto> Authenticate(UserLoginDto userLoginDto)
     {
-        throw new NotImplementedException();
-    }
+        var user = _mapper.Map<User>(userLoginDto);
+        var validateResult = await _userRepository.ValidatePass(user);
 
-    public Task<UserDto> Add(UserInsertDto TIEntityInsertDto)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<UserDto> Update(UserUpdateDto TUEntityUpdateDto)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<UserDto> Delete(int id)
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool Validate(UserInsertDto TIEntityInsertDto)
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool Validate(UserUpdateDto TUEntityUpdateDto)
-    {
-        throw new NotImplementedException();
-    }
-
-    public string Authenticate(UserLoginDto userLoginDto)
-    {
-        // var usuarios = await _userRepository.Get();
-        var autheticate = _userRepository.Search(user =>
-            user.Email == userLoginDto.Email && user.Password == userLoginDto.Password);
-
-        if (autheticate.Count() > 0)
+        if (validateResult != null)
         {
-            var user = GenerateJwtToken(autheticate.First().Email, autheticate.First().Password);
-            return user;
+            var token = await GenerateJwtToken(user.Email, validateResult);
+            var tokenDto = _mapper.Map<TokenDto>(token);
+            tokenDto = _mapper.Map(validateResult, tokenDto);
+            tokenDto.Role = await _userRepository.GetRoles(validateResult);
+            return tokenDto;
+        }
+
+        return null;
+    }
+
+    public async Task<UserDto> UserGetInfo(string email)
+    {
+        var userFind = await _userRepository.GetUserInfo(email);
+
+        if (userFind != null)
+        {
+            return _mapper.Map<UserDto>(userFind);
+        }
+        
+        return null;
+    }
+
+    public async Task<UserDto> UserUpdateInfo(UserUpdateDto userUpdateDto, string email)
+    {
+        var user = _mapper.Map<User>(userUpdateDto);
+        var userFind = await _userRepository.GetUserInfo(email);
+        userFind = _mapper.Map(userUpdateDto, userFind);
+        if (userFind != null)
+        {
+            var result = await _userRepository.UpdateInfo(userFind);
+            if (result.Succeeded)
+            {
+                return _mapper.Map<UserDto>(userFind);
+            }
         }
         return null;
     }
-    
-    private string GenerateJwtToken(string username, string password)
-    {
-        var jwtSettings = _config.GetSection("JwtSettings");
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-        var claims = new[]
+    public async Task<UserDto> UserRegister(UserInsertDto userInsertDto)
+    {
+        var user = _mapper.Map<User>(userInsertDto);
+        var result = await _userRepository.Register(user);
+        await _userRepository.SetUserRole(user, "User");
+        if (result.Errors.Count() > 0)
         {
-            new Claim(JwtRegisteredClaimNames.Sub, username),
-            new Claim(JwtRegisteredClaimNames.Sub, password),
+            Errors = result.Errors;
+        }
+
+        return result.Succeeded ? _mapper.Map<UserDto>(user) : null;
+    }
+
+    public async Task<UserDto> AdminRegister(UserInsertDto userInsertDto)
+    {
+        var user = _mapper.Map<User>(userInsertDto);
+        var result = await _userRepository.Register(user);
+        await _userRepository.SetUserRole(user, "Admin");
+        if (result.Errors.Count() > 0)
+        {
+            Errors = result.Errors;
+        }
+
+        return result.Succeeded ? _mapper.Map<UserDto>(user) : null;
+    }
+
+    public async Task<UserDto> CustomerRegister(UserInsertDto userInsertDto)
+    {
+        var user = _mapper.Map<User>(userInsertDto);
+        var result = await _userRepository.Register(user);
+        await _userRepository.SetUserRole(user, "Customer");
+        if (result.Errors.Count() > 0)
+        {
+            Errors = result.Errors;
+        }
+
+        return result.Succeeded ? _mapper.Map<UserDto>(user) : null;
+    }
+
+    public async Task<UserDto> UserDelete(string email)
+    {
+        var validateResult = await _userRepository.GetUserInfo(email);
+        if (validateResult == null)
+        {
+            return null;
+        }
+        var result = await _userRepository.DeleteUser(validateResult);
+        if (result.Errors.Count() > 0)
+        {
+            Errors = result.Errors;
+        }
+        return result.Succeeded ? _mapper.Map<UserDto>(validateResult) : null;
+    }
+
+    private async Task<string> GenerateJwtToken(string email, User user)
+    {
+        var claims = new List<Claim>
+        {
+            new Claim(JwtRegisteredClaimNames.Sub, email),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 
+        var userRoles = await _userRepository.GetRoles(user);
+        foreach (var role in userRoles)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, role));
+        }
+
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JwtSettings:SecretKey"]));
+        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
         var token = new JwtSecurityToken(
-            issuer: jwtSettings["Issuer"],
-            audience: jwtSettings["Audience"],
+            issuer: _config["JwtSettings:Issuer"],
+            audience: _config["JwtSettings:Audience"],
             claims: claims,
-            expires: DateTime.UtcNow.AddHours(1),
-            signingCredentials: creds
-        );
+            expires: DateTime.Now.AddMinutes(30),
+            signingCredentials: credentials);
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
