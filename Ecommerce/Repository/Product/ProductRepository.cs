@@ -45,6 +45,6 @@ public class ProductRepository : IProductRepository<Product>
     
     public IEnumerable<Product> Search(Func<Product, bool> filter)
     {
-        return _context.Products.Where(filter);
+        return _context.Products.Where(filter).ToList();
     }
 }

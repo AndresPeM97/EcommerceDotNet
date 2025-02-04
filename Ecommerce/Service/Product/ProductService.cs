@@ -88,8 +88,11 @@ public class ProductService : IProductService
         return null;
     }
 
-    public Task<ProductGetListDto> SearchProducts(Func<Product, bool> filter)
+    public async Task<IEnumerable<ProductGetListDto>> SearchProducts(string owner)
     {
-        throw new NotImplementedException();
+        var productOwner = await _userRepository.GetUserInfo(owner);
+        
+        var products = _productRepository.Search(p => p.Owner == productOwner.Id);
+        return products.Select(p => _mapper.Map<ProductGetListDto>(p));
     }
 }

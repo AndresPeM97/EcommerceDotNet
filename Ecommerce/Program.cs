@@ -16,15 +16,23 @@ var builder = WebApplication.CreateBuilder(args);
 //Services
 builder.Services.AddScoped<IUserLoginService<UserLoginDto>, UserService>();
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ICartService, CartService>();
 //Repository
 builder.Services.AddScoped<IUserRepository<User>, UserRepository>();
 builder.Services.AddScoped<IProductRepository<Product>, ProductRepository>();
+builder.Services.AddScoped<ICartRepository<Cart>, CartRepository>();
 
-// DBContext
+// DBContext MySQL
 builder.Services.AddDbContext<StoreContext>(options =>
 {
-    options.UseMySql(builder.Configuration.GetConnectionString("StoreConnection"), new MySqlServerVersion(new Version(9, 2, 0)));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("StoreConnection"));
 });
+//SQL Server
+// builder.Services.AddDbContext<StoreContext>(options =>
+// {
+//     options.UseSqlServer(builder.Configuration.GetConnectionString("StoreConnection"));
+// });
+
 //Identity
 builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<StoreContext>()

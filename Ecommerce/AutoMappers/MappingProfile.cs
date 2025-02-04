@@ -30,7 +30,13 @@ public class MappingProfile : Profile
 
         CreateMap<ProductInsertDto, Product>();
         CreateMap<ProductChangeDto, Product>();
-        
 
+        CreateMap<Cart, CartItemDto>()
+            .ForMember(dto => dto.Name,
+            m => m.MapFrom(i => i.Product.Name))
+            .ForMember(dto => dto.ProductId,
+                m => m.MapFrom(i => i.Product.Id))
+            .ForMember(dto => dto.Price,
+            m => m.MapFrom(i => i.Product.Price));
     }
 }

@@ -64,5 +64,15 @@ namespace Ecommerce.Controllers
             
             return product != null ? Ok(product) : NotFound();
         }
+        
+        [Authorize(Roles = "Customer")]
+        [HttpGet("myproducts")]
+        public async Task<ActionResult<IEnumerable<ProductGetListDto>>> GetMyProductsList()
+        {
+            var owner = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+            var myproducts = await _productService.SearchProducts(owner);
+            
+            return myproducts.Count() > 0 ? Ok(myproducts) : NotFound("No se encontraron productos");
+        }
     }
 }
