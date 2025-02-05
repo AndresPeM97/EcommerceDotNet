@@ -2,6 +2,7 @@ using AutoMapper;
 using Ecommerce.DTOs;
 using Ecommerce.Models;
 using Ecommerce.Repository;
+using Microsoft.AspNetCore.Razor.Language;
 
 namespace Ecommerce.Service;
 
@@ -37,12 +38,17 @@ public class CartService : ICartService
         var item = await _cartRepository.GetItem(itemId, userFind.Id);
         if (item == null)
         {
-            item.UserId = userFind.Id;
-            item.ProductId = itemId;
-            item.Quantity = 1;
-            
-            await _cartRepository.AddItem(item);
+            var newItem = new Cart
+            {
+                UserId = userFind.Id,
+                ProductId = itemId,
+                Quantity = 1
+            };
+
+            await _cartRepository.AddItem(newItem);
             await _cartRepository.SaveChanges();
+            
+            item = await _cartRepository.GetItem(itemId, userFind.Id);
             
             return _mapper.Map<CartItemDto>(item);
         }

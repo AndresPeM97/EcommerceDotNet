@@ -17,7 +17,7 @@ public class CartRepository : ICartRepository<Cart>
     {   
         var item = await _context.Carts
             .Include(a => a.Product) // ← Asegura que carga la relación
-            .FirstAsync(a => a.ProductId == id && a.UserId == userId);
+            .FirstOrDefaultAsync(a => a.ProductId == id && a.UserId == userId);
 
         return item;
     }
