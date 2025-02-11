@@ -27,7 +27,7 @@ namespace Ecommerce.Controllers
             
             var items = await _cartService.GetItemsCart(owner);
             
-            return items.Any() ? Ok(items) : NotFound();
+            return items.Any() ? Ok(items) : NoContent();
             
         }
 
@@ -60,7 +60,7 @@ namespace Ecommerce.Controllers
             
             var item = await _cartService.DecreaseItem(id, owner);
             
-            return item != null ? Ok(item) : NotFound();
+            return item != null ? Ok(item) : NoContent();
         }
         
         [Authorize]

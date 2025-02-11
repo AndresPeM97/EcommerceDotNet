@@ -18,7 +18,6 @@ public class Product
     public decimal? Rate { get; set; }
     
     [ForeignKey("UserId")]
-    public string Owner  { get; set; }
-    
     virtual public User User { get; set; }
+    public string UserId  { get; set; }
 }

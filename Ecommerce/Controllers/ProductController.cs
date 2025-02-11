@@ -20,7 +20,6 @@ namespace Ecommerce.Controllers
             _productService = productService;
         }
         
-        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {
@@ -42,7 +41,7 @@ namespace Ecommerce.Controllers
         public async Task<ActionResult<ProductGetSingleDto>> AddProduct(ProductInsertDto productInsertDto)
         {
             var owner = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            var product = await _productService.AddProduct(productInsertDto, owner);
+            var product = await _productService.AddProduct(productInsertDto, owner, productInsertDto.imageFile);
             
             return CreatedAtAction(nameof(GetProductById), new { id = product.Id }, product);
         }
@@ -74,5 +73,16 @@ namespace Ecommerce.Controllers
             
             return myproducts.Count() > 0 ? Ok(myproducts) : NotFound("No se encontraron productos");
         }
+        
+        [Authorize(Roles = "Customer")]
+        [HttpPost("upload")]
+        public async Task<IActionResult> UploadProductImage(int productId, IFormFile imageFile)
+        {
+            var imageResult = await _productService.UploadImage(productId, imageFile);
+
+            return imageResult != null ? Ok(imageResult) : NotFound();
+        }
+
+        
     }
 }

@@ -37,7 +37,7 @@ public class ProductService : IProductService
         return products.Select(p => _mapper.Map<ProductGetListDto>(p));
     }
 
-    public async Task<ProductGetSingleDto> AddProduct(ProductInsertDto productInsertDto, string owner)
+    public async Task<ProductGetSingleDto> AddProduct(ProductInsertDto productInsertDto, string owner, IFormFile imageFile)
     {
         var productOwner = await _userRepository.GetUserInfo(owner);
         
@@ -48,9 +48,22 @@ public class ProductService : IProductService
 
         if (productFind == null)
         {
-            product.Owner = productOwner.Id;
+            product.UserId = productOwner.Id;
             await _productRepository.AddProduct(product);
             await _productRepository.SaveChanges();
+            
+            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
+            if (!Directory.Exists(uploadsFolder))
+            {
+                Directory.CreateDirectory(uploadsFolder);
+            }
+        
+            var filePath = Path.Combine(uploadsFolder, product.Name + ".jpg");
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await imageFile.CopyToAsync(stream);
+            }
             
             return _mapper.Map<ProductGetSingleDto>(product);
         }
@@ -92,7 +105,37 @@ public class ProductService : IProductService
     {
         var productOwner = await _userRepository.GetUserInfo(owner);
         
-        var products = _productRepository.Search(p => p.Owner == productOwner.Id);
+        var products = _productRepository.Search(p => p.UserId == productOwner.Id);
         return products.Select(p => _mapper.Map<ProductGetListDto>(p));
+    }
+
+    public async Task<string> UploadImage(int productId, IFormFile imageFile)
+    {
+        if (imageFile == null || imageFile.Length == 0)
+        {
+            return null;
+        }
+
+        var product = await _productRepository.GetProductById(productId);
+        if (product == null)
+        {
+            return null;
+        }
+
+        // Guardar la imagen en el servidor
+        var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
+        if (!Directory.Exists(uploadsFolder))
+        {
+            Directory.CreateDirectory(uploadsFolder);
+        }
+        
+        var filePath = Path.Combine(uploadsFolder, product.Name + ".jpg");
+
+        using (var stream = new FileStream(filePath, FileMode.Create))
+        {
+            await imageFile.CopyToAsync(stream);
+        }
+        
+        return filePath;
     }
 }

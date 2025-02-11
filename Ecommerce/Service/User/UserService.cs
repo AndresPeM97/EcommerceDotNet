@@ -37,7 +37,6 @@ public class UserService : IUserLoginService<UserLoginDto>
             var token = await GenerateJwtToken(user.Email, validateResult);
             var tokenDto = _mapper.Map<TokenDto>(token);
             tokenDto = _mapper.Map(validateResult, tokenDto);
-            tokenDto.Role = await _userRepository.GetRoles(validateResult);
             return tokenDto;
         }
 
@@ -47,10 +46,13 @@ public class UserService : IUserLoginService<UserLoginDto>
     public async Task<UserDto> UserGetInfo(string email)
     {
         var userFind = await _userRepository.GetUserInfo(email);
+        var userRoles = await _userRepository.GetRoles(userFind);
 
         if (userFind != null)
         {
-            return _mapper.Map<UserDto>(userFind);
+            var userDto = _mapper.Map<UserDto>(userFind);
+            userDto.Roles = userRoles;
+            return userDto;
         }
         
         return null;
@@ -75,6 +77,7 @@ public class UserService : IUserLoginService<UserLoginDto>
     public async Task<UserDto> UserRegister(UserInsertDto userInsertDto)
     {
         var user = _mapper.Map<User>(userInsertDto);
+        user.UserName = userInsertDto.Email;
         var result = await _userRepository.Register(user);
         await _userRepository.SetUserRole(user, "User");
         if (result.Errors.Count() > 0)
@@ -88,6 +91,7 @@ public class UserService : IUserLoginService<UserLoginDto>
     public async Task<UserDto> AdminRegister(UserInsertDto userInsertDto)
     {
         var user = _mapper.Map<User>(userInsertDto);
+        user.UserName = userInsertDto.Email;
         var result = await _userRepository.Register(user);
         await _userRepository.SetUserRole(user, "Admin");
         if (result.Errors.Count() > 0)
@@ -101,8 +105,10 @@ public class UserService : IUserLoginService<UserLoginDto>
     public async Task<UserDto> CustomerRegister(UserInsertDto userInsertDto)
     {
         var user = _mapper.Map<User>(userInsertDto);
+        user.UserName = userInsertDto.Email;
         var result = await _userRepository.Register(user);
         await _userRepository.SetUserRole(user, "Customer");
+        await _userRepository.SetUserRole(user, "User");
         if (result.Errors.Count() > 0)
         {
             Errors = result.Errors;

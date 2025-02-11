@@ -32,6 +32,7 @@ public class CartService : ICartService
 
     public async Task<CartItemDto> AddItem(int itemId, string user)
     {
+        var itemDto = new CartItemDto();
         var userFind = await _userRepository.GetUserInfo(user);
         if(userFind == null){return null;}
         
@@ -50,18 +51,23 @@ public class CartService : ICartService
             
             item = await _cartRepository.GetItem(itemId, userFind.Id);
             
-            return _mapper.Map<CartItemDto>(item);
+            itemDto = _mapper.Map<CartItemDto>(item);
+            itemDto.Total = itemDto.Price;
+            return itemDto;
         }
         
         item.Quantity += 1;
         _cartRepository.UpdateItem(item);
         await _cartRepository.SaveChanges();
         
-        return _mapper.Map<CartItemDto>(item);
+        itemDto = _mapper.Map<CartItemDto>(item);
+        itemDto.Total = item.Quantity * itemDto.Price;
+        return itemDto;
     }
 
     public async Task<CartItemDto> DecreaseItem(int itemId, string user)
     {
+        var itemDto = new CartItemDto();
         var userFind = await _userRepository.GetUserInfo(user);
         if(userFind == null){return null;}
         
@@ -82,7 +88,10 @@ public class CartService : ICartService
         }
         await _cartRepository.SaveChanges();
         
-        return _mapper.Map<CartItemDto>(item);
+        itemDto = _mapper.Map<CartItemDto>(item);
+        itemDto.Total = item.Quantity * itemDto.Price;
+        return itemDto;
+
     }
 
     public async Task<CartItemDto> RemoveItem(int itemId, string user)

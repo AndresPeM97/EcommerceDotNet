@@ -1,0 +1,109 @@
+{
+  "Files": [
+    {
+      "Id": "/Users/macminiandres/Proyectos/CS/Ecommerce/Ecommerce/wwwroot/images/\"Lapiz\".jpg",
+      "PackagePath": "staticwebassets/images/\"Lapiz\".jpg"
+    },
+    {
+      "Id": "/Users/macminiandres/Proyectos/CS/Ecommerce/Ecommerce/wwwroot/images/Audifonos In-Ear.jpg",
+      "PackagePath": "staticwebassets/images/Audifonos In-Ear.jpg"
+    },
+    {
+      "Id": "/Users/macminiandres/Proyectos/CS/Ecommerce/Ecommerce/wwwroot/images/Auriculares Bluetooth.jpg",
+      "PackagePath": "staticwebassets/images/Auriculares Bluetooth.jpg"
+    },
+    {
+      "Id": "/Users/macminiandres/Proyectos/CS/Ecommerce/Ecommerce/wwwroot/images/Bocina Bluetooth Portatil.jpg",
+      "PackagePath": "staticwebassets/images/Bocina Bluetooth Portatil.jpg"
+    },
+    {
+      "Id": "/Users/macminiandres/Proyectos/CS/Ecommerce/Ecommerce/wwwroot/images/Cafetera Automatica.jpg",
+      "PackagePath": "staticwebassets/images/Cafetera Automatica.jpg"
+    },
+    {
+      "Id": "/Users/macminiandres/Proyectos/CS/Ecommerce/Ecommerce/wwwroot/images/Camara Web 1080p.jpg",
+      "PackagePath": "staticwebassets/images/Camara Web 1080p.jpg"
+    },
+    {
+      "Id": "/Users/macminiandres/Proyectos/CS/Ecommerce/Ecommerce/wwwroot/images/Cargador Inalambrico.jpg",
+      "PackagePath": "staticwebassets/images/Cargador Inalambrico.jpg"
+    },
+    {
+      "Id": "/Users/macminiandres/Proyectos/CS/Ecommerce/Ecommerce/wwwroot/images/Disco Duro Externo 1TB.jpg",
+      "PackagePath": "staticwebassets/images/Disco Duro Externo 1TB.jpg"
+    },
+    {
+      "Id": "/Users/macminiandres/Proyectos/CS/Ecommerce/Ecommerce/wwwroot/images/Impresora Multifuncional.jpg",
+      "PackagePath": "staticwebassets/images/Impresora Multifuncional.jpg"
+    },
+    {
+      "Id": "/Users/macminiandres/Proyectos/CS/Ecommerce/Ecommerce/wwwroot/images/Lampara LED Escritorio.jpg",
+      "PackagePath": "staticwebassets/images/Lampara LED Escritorio.jpg"
+    },
+    {
+      "Id": "/Users/macminiandres/Proyectos/CS/Ecommerce/Ecommerce/wwwroot/images/Microfono Condensador.jpg",
+      "PackagePath": "staticwebassets/images/Microfono Condensador.jpg"
+    },
+    {
+      "Id": "/Users/macminiandres/Proyectos/CS/Ecommerce/Ecommerce/wwwroot/images/Mochila para Laptop.jpg",
+      "PackagePath": "staticwebassets/images/Mochila para Laptop.jpg"
+    },
+    {
+      "Id": "/Users/macminiandres/Proyectos/CS/Ecommerce/Ecommerce/wwwroot/images/Monitor Full HD.jpg",
+      "PackagePath": "staticwebassets/images/Monitor Full HD.jpg"
+    },
+    {
+      "Id": "/Users/macminiandres/Proyectos/CS/Ecommerce/Ecommerce/wwwroot/images/Mouse Gamer.jpg",
+      "PackagePath": "staticwebassets/images/Mouse Gamer.jpg"
+    },
+    {
+      "Id": "/Users/macminiandres/Proyectos/CS/Ecommerce/Ecommerce/wwwroot/images/Power Bank 10000mAh.jpg",
+      "PackagePath": "staticwebassets/images/Power Bank 10000mAh.jpg"
+    },
+    {
+      "Id": "/Users/macminiandres/Proyectos/CS/Ecommerce/Ecommerce/wwwroot/images/Router WiFi 6.jpg",
+      "PackagePath": "staticwebassets/images/Router WiFi 6.jpg"
+    },
+    {
+      "Id": "/Users/macminiandres/Proyectos/CS/Ecommerce/Ecommerce/wwwroot/images/Silla Gamer.jpg",
+      "PackagePath": "staticwebassets/images/Silla Gamer.jpg"
+    },
+    {
+      "Id": "/Users/macminiandres/Proyectos/CS/Ecommerce/Ecommerce/wwwroot/images/Smart TV 50'' 4K UHD.jpg",
+      "PackagePath": "staticwebassets/images/Smart TV 50'' 4K UHD.jpg"
+    },
+    {
+      "Id": "/Users/macminiandres/Proyectos/CS/Ecommerce/Ecommerce/wwwroot/images/Smartwatch Deportivo.jpg",
+      "PackagePath": "staticwebassets/images/Smartwatch Deportivo.jpg"
+    },
+    {
+      "Id": "/Users/macminiandres/Proyectos/CS/Ecommerce/Ecommerce/wwwroot/images/Tablet 10.5 pulgadas.jpg",
+      "PackagePath": "staticwebassets/images/Tablet 10.5 pulgadas.jpg"
+    },
+    {
+      "Id": "/Users/macminiandres/Proyectos/CS/Ecommerce/Ecommerce/wwwroot/images/Teclado Mecanico RGB.jpg",
+      "PackagePath": "staticwebassets/images/Teclado Mecanico RGB.jpg"
+    },
+    {
+      "Id": "/Users/macminiandres/Proyectos/CS/Ecommerce/Ecommerce/wwwroot/images/Telefono inteligente.jpg",
+      "PackagePath": "staticwebassets/images/Telefono inteligente.jpg"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.Ecommerce.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.build.Ecommerce.props",
+      "PackagePath": "build\\Ecommerce.props"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.buildMultiTargeting.Ecommerce.props",
+      "PackagePath": "buildMultiTargeting\\Ecommerce.props"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.buildTransitive.Ecommerce.props",
+      "PackagePath": "buildTransitive\\Ecommerce.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

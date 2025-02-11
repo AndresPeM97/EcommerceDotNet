@@ -65,10 +65,6 @@ namespace Ecommerce.MigrationsMySQL
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Owner")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(10,2)");
 
@@ -79,6 +75,7 @@ namespace Ecommerce.MigrationsMySQL
                         .HasColumnType("decimal(2,1)");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -116,6 +113,10 @@ namespace Ecommerce.MigrationsMySQL
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -315,7 +316,9 @@ namespace Ecommerce.MigrationsMySQL
                 {
                     b.HasOne("Ecommerce.Models.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
