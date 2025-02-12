@@ -8,6 +8,7 @@ trigger:
 
 pool:
   vmImage: 'windows-latest'
+  name: Default
   demands: 
   - agent.name -equals Mac-mini-de-Andres
 
