@@ -8,6 +8,8 @@ trigger:
 
 pool:
   vmImage: 'windows-latest'
+  demands: 
+  - agent.name -equals Mac-mini-de-Andres
 
 variables:
   solution: '**/*.sln'
