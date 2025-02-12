@@ -16,7 +16,7 @@ variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
-  ConnectionStrings__DefaultConnection: $(ConnectionStrings__DefaultConnection)
+  ConnectionStrings__DefaultConnection: $(connectionString)
 
 steps:
 - task: NuGetToolInstaller@1
